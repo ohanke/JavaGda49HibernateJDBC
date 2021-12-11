@@ -33,7 +33,30 @@ public class App
         Country country = countriesDao.getCountryById("KW");
         System.out.println("Country by id 2: " + country);
 
-//        preparedStatement.close();
+        System.out.println("Removing region with id = 2");
+        regionDao.delete(2);
+        regionDao.getAllRegions().forEach(System.out::println);
+
+        System.out.println("Removing country with id = 'AU'");
+        countriesDao.delete("AU");
+        countriesDao.getAllCountries().forEach(System.out::println);
+
+        System.out.println("Region update example");
+        Region region3 = regionDao.getRegionById(3);
+        System.out.println(region3);
+        region3.setRegionName("Asia updated");
+        System.out.println(region3);
+
+        System.out.println("Country update example");
+        Country country1 = countriesDao.getCountryById("BE");
+        System.out.println(country1);
+        country1.setCountryName("Belgium updated");
+        System.out.println(country1);
+
+        System.out.println("Transaction example");
+        regionDao.trasactionTest("testOne", "testTwo");
+        regionDao.getAllRegions().forEach(System.out::println);
+
         connection.close();
     }
 }

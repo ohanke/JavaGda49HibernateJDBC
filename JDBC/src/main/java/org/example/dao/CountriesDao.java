@@ -1,6 +1,8 @@
 package org.example.dao;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 import org.example.models.Country;
 
 import java.sql.Connection;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
+
 public class CountriesDao {
     private Connection connection;
 
@@ -19,11 +22,13 @@ public class CountriesDao {
                 "SELECT * FROM COUNTRIES WHERE COUNTRY_ID = ?");
         preparedStatement.setString(1, countryId);
         ResultSet resultSet = preparedStatement.executeQuery();
-        resultSet.next();
-        String country_idFromDB = resultSet.getString("COUNTRY_ID");
-        String country_name = resultSet.getString("COUNTRY_NAME");
-        int region_id = resultSet.getInt("REGION_ID");
-        return new Country(country_idFromDB, country_name, region_id);
+        if (resultSet.next()){
+            String country_idFromDB = resultSet.getString("COUNTRY_ID");
+            String country_name = resultSet.getString("COUNTRY_NAME");
+            int region_id = resultSet.getInt("REGION_ID");
+            return new Country(country_idFromDB, country_name, region_id);
+        }
+        return null;
     }
 
     public List<Country> getAllCountries() throws SQLException {
@@ -41,5 +46,23 @@ public class CountriesDao {
             countries.add(country);
         }
         return countries;
+    }
+
+    public void delete(String countryId) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM COUNTRIES WHERE COUNTRY_ID = ?");
+        preparedStatement.setString(1, countryId);
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
+    }
+
+    public void update(Country country) throws SQLException {
+        String statement = "";
+        PreparedStatement preparedStatement = connection.prepareStatement(statement);
+        preparedStatement.setString(1, country.getCountryId());
+        preparedStatement.setString(2, country.getCountryName());
+        preparedStatement.setInt(3, country.getRegionId());
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
+
     }
 }
